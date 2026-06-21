@@ -1,97 +1,95 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Booking
 
-# Getting Started
+`booking` is a [React Native](https://reactnative.dev) **mini-app** within the Super App Showcase. It is built as a [Module Federation](https://module-federation.io) remote using [Re.Pack](https://re-pack.dev) (Rspack), and is loaded at runtime by the host shell — or run on its own in standalone mode for local development.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## What it exposes
 
-## Step 1: Start Metro
+The Rspack config registers a federated container named `booking` and exposes a single module:
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+| Key      | Module     | Description                            |
+| -------- | ---------- | -------------------------------------- |
+| `./App`  | `./App`    | Root component rendered by the host    |
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- **Container name:** `booking`
+- **Remote entry:** `booking.container.js.bundle`
+- **Output uniqueName:** `sas-booking`
+
+It also shares a single [`super-app-showcase-sdk/lib/counterStore`](../superApp/packages/sdk) singleton with the rest of the mini-apps, so the "Shared counter" stays in sync across the super app.
+
+## Tech stack
+
+- React Native `0.84.1` / React `19.2.3`
+- [`@callstack/repack`](https://re-pack.dev) `^5.2.5` with `@rspack/core` for bundling
+- [`@module-federation/enhanced`](https://module-federation.io) (`ModuleFederationPluginV2`)
+- [`zustand`](https://github.com/pmndrs/zustand) for state (shared counter store)
+- [`@gorhom/bottom-sheet`](https://github.com/gorhom/react-native-bottom-sheet) + `react-native-reanimated` / `react-native-gesture-handler`
+
+## Getting Started
+
+> **Note**: Complete the [React Native environment setup](https://reactnative.dev/docs/set-up-your-environment) before proceeding. Requires Node `>= 22.11.0`.
+
+Install dependencies (this repo uses `pnpm`):
 
 ```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
+pnpm install
 ```
 
-## Step 2: Build and run your app
+### Step 1: Start the dev server
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+`booking` runs its Re.Pack dev server on **port 9000** so it doesn't collide with the host (8081):
 
 ```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+pnpm start
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+To run the mini-app **standalone** (eager-loaded shared deps, default port 8081):
 
 ```sh
+pnpm start:standalone
+```
+
+The `STANDALONE` env flag flips shared dependencies to `eager` so the bundle can boot without a host providing them.
+
+### Step 2: Build and run on a device
+
+With the dev server running, in another terminal:
+
+```sh
+# Android
+pnpm android   # react-native run-android --no-packager --active-arch-only
+
+# iOS — install pods first (first clone / after native dep changes)
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
+pnpm ios
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+> When adding a native module, see the project memory note on rebuilding generated Android dirs with `--active-arch-only`.
 
-```sh
-# Using npm
-npm run ios
+## Project layout
 
-# OR using Yarn
-yarn ios
-```
+| Path                | Purpose                                                        |
+| ------------------- | ------------------------------------------------------------- |
+| `App.tsx`           | Root component — booking screen, shared counter, bottom sheet |
+| `index.js`          | `AppRegistry` entry point (standalone runs)                   |
+| `rspack.config.mjs` | Re.Pack + Module Federation V2 configuration                  |
+| `sharedDeps.js`     | Derives the shared dependency map from `package.json`         |
+| `android/` `ios/`   | Native projects                                               |
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Scripts
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+| Script                   | Description                                          |
+| ------------------------ | ---------------------------------------------------- |
+| `pnpm start`             | Start the dev server on port 9000                    |
+| `pnpm start:standalone`  | Start standalone (eager shared deps) on port 8081    |
+| `pnpm android`           | Build & run on Android                               |
+| `pnpm ios`               | Build & run on iOS                                   |
+| `pnpm lint`              | Run ESLint                                           |
+| `pnpm test`              | Run Jest tests                                       |
 
-## Step 3: Modify your app
+## Learn more
 
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- [Re.Pack documentation](https://re-pack.dev/docs)
+- [Module Federation](https://module-federation.io)
+- [React Native](https://reactnative.dev)
+</content>

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --no-packager --active-arch-only",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start --port 9000",
@@ -11,11 +11,17 @@
     "test": "jest"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "5.2.14",
     "@module-federation/enhanced": "2.3.1",
     "react": "19.2.3",
     "react-native": "0.84.1",
     "@react-native/new-app-screen": "0.84.1",
-    "react-native-safe-area-context": "^5.5.2"
+    "react-native-gesture-handler": "3.0.2",
+    "react-native-reanimated": "4.4.1",
+    "react-native-safe-area-context": "^5.5.2",
+    "react-native-worklets": "0.9.2",
+    "super-app-showcase-sdk": "file:../superApp/packages/sdk",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

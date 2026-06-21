@@ -47,7 +47,15 @@ export default Repack.defineRspackConfig({
       exposes: {
         './App': './App',
       },
-      shared: getSharedDependencies({ eager: STANDALONE }),
+      shared: {
+        ...getSharedDependencies({ eager: STANDALONE }),
+        // Single shared counter store instance across mini-apps.
+        'super-app-showcase-sdk/lib/counterStore': {
+          singleton: true,
+          eager: STANDALONE,
+          requiredVersion: false,
+        },
+      },
     }),
   ],
 });
