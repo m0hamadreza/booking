@@ -5,6 +5,9 @@
  * @format
  */
 
+// NativeWind styles must register inside the EXPOSED module graph (this file is
+// exposed to the host), so they load both standalone and when federated.
+import './global.css';
 import { useCallback, useRef } from 'react';
 import {
   Button,
@@ -69,6 +72,10 @@ function AppContent() {
 
   return (
     <View style={styles.container}>
+      {/* NativeWind smoke test — booking (red) */}
+      <View className="self-center rounded-xl bg-red-500 px-4 py-3">
+        <Text className="font-bold text-white">NativeWind ✓ booking (red)</Text>
+      </View>
       <Text style={styles.title}>Booking</Text>
       <Counter />
       <Button title="Open booking details" onPress={handlePresentModalPress} />
