@@ -22,6 +22,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { vars } from 'nativewind';
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
@@ -46,17 +47,39 @@ function Counter() {
   );
 }
 
+// booking's brand color — scoped to booking's subtree via the --color-brand*
+// CSS variables so it never leaks into the host or other mini-apps.
+// Every shade is set so the whole `brand-50`..`brand-900` ramp resolves here.
+const bookingTheme = vars({
+  '--color-brand-50': '#eaf6ee',
+  '--color-brand-100': '#d6eedc',
+  '--color-brand-200': '#addcba',
+  '--color-brand-300': '#84cb97',
+  '--color-brand-400': '#5bb975',
+  '--color-brand-500': '#32a852',
+  '--color-brand-600': '#288642',
+  '--color-brand-700': '#1e6531',
+  '--color-brand-800': '#144321',
+  '--color-brand-900': '#0a2210',
+});
+
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        <BottomSheetModalProvider>
-          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-          <AppContent />
-        </BottomSheetModalProvider>
-      </SafeAreaProvider>
+      {/* vars() must sit on a core RN component (View) — NativeWind does NOT
+          instrument GestureHandlerRootView, so a CSS var set there is dropped. */}
+      <View style={[styles.root, bookingTheme]}>
+        <SafeAreaProvider>
+          <BottomSheetModalProvider>
+            <StatusBar
+              barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+            />
+            <AppContent />
+          </BottomSheetModalProvider>
+        </SafeAreaProvider>
+      </View>
     </GestureHandlerRootView>
   );
 }
@@ -73,7 +96,7 @@ function AppContent() {
   return (
     <View style={styles.container}>
       {/* NativeWind smoke test — booking (red) */}
-      <View className="self-center rounded-xl bg-red-500 px-4 py-3">
+      <View className="self-center rounded-xl bg-brand-300 px-4 py-3">
         <Text className="font-bold text-white">NativeWind ✓ booking (red)</Text>
       </View>
       <Text style={styles.title}>Booking</Text>
