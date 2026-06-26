@@ -21,6 +21,19 @@ export default Repack.defineRspackConfig({
   entry: './index.js',
   resolve: {
     ...Repack.getResolveOptions({enablePackageExports: true}),
+    // Pin singleton-critical packages to this app's copy so the symlinked SDK
+    // doesn't resolve a second physical instance (double-registers native
+    // views, e.g. "two views named RCTText").
+    alias: {
+      react: path.join(__dirname, 'node_modules/react'),
+      'react-native': path.join(__dirname, 'node_modules/react-native'),
+      'react-native-svg': path.join(__dirname, 'node_modules/react-native-svg'),
+      'react-native-css-interop': path.join(
+        __dirname,
+        'node_modules/react-native-css-interop',
+      ),
+      nativewind: path.join(__dirname, 'node_modules/nativewind'),
+    },
   },
   output: {
     uniqueName: 'sas-booking',
@@ -36,7 +49,9 @@ export default Repack.defineRspackConfig({
           options: {},
         },
       },
-      ...Repack.getAssetTransformRules(),
+      // `svg: 'svgr'` makes `.svg` imports compile to react-native-svg
+      // components (via @svgr/webpack, native:true) — used for shared icons.
+      ...Repack.getAssetTransformRules({svg: 'svgr'}),
     ],
   },
   plugins: [

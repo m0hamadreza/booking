@@ -29,6 +29,7 @@ import {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import { useCounterStore } from 'super-app-showcase-sdk/lib/counterStore';
+import { Icon } from 'super-app-showcase-sdk/icons';
 
 function Counter() {
   const count = useCounterStore(state => state.count);
@@ -98,6 +99,14 @@ function AppContent() {
       {/* NativeWind smoke test — booking (red) */}
       <View className="self-center rounded-xl bg-brand-300 px-4 py-3">
         <Text className="font-bold text-white">NativeWind ✓ booking (red)</Text>
+      </View>
+      {/* Shared SVG icons — color follows the booking brand theme via `text-brand-*`. */}
+      <View className="flex-row items-center gap-4">
+        <Icon name="home" className="text-brand-500" size={28} />
+        <Icon name="heart" className="text-brand-200" size={28} />
+        <Icon name="bell" className="text-brand-700" size={28} />
+                <Icon name="share" className="text-brand-700" size={28} />
+
       </View>
       <Text style={styles.title}>Booking</Text>
       <Counter />
